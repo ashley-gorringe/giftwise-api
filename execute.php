@@ -39,6 +39,19 @@ $router->get('/example', function(){
     return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/get-example.php';
 });
 
+$router->get('/users-email-count/{email}', function($email){
+    return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/users-email-count.php';
+});
+$router->get('/user-tokens/{token}', function($token){
+    return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/user-tokens-get.php';
+});
+$router->post('/user-sign-in', function(){
+    return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/user-sign-in-post.php';
+});
+$router->post('/users', function(){
+    return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/users-post.php';
+});
+
 //Dispatches the routes
 $dispatcher = new Phroute\Phroute\Dispatcher($router->getData());
 $response = $dispatcher->dispatch($_SERVER['REQUEST_METHOD'], parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
