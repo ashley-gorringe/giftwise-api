@@ -33,23 +33,20 @@ $router = new RouteCollector();
 
 //Sets up the routes
 $router->any('/', function(){
-    return 'This responds to the default route';
-});
-$router->get('/example', function(){
-    return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/get-example.php';
+    http_response_code(400);
 });
 
-$router->get('/users-email-count/{email}', function($email){
-    return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/users-email-count.php';
-});
-$router->get('/user-tokens/{token}', function($token){
-    return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/user-tokens-get.php';
-});
-$router->post('/user-sign-in', function(){
-    return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/user-sign-in-post.php';
-});
 $router->post('/users', function(){
     return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/users-post.php';
+});
+$router->get('/users', function(){
+    return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/users-get.php';
+});
+$router->post('/login_tokens', function(){
+    return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/login_tokens-post.php';
+});
+$router->get('/login_tokens/{token}', function($token){
+    return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/login_tokens-get.php';
 });
 
 //Dispatches the routes
