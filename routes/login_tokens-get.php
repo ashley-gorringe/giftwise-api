@@ -24,6 +24,12 @@ $user = $GLOBALS['database']->get('user',[
 ], [
     'user_id' => $user_id
 ]);
+//get the primary account from the user_id
+$primary_account = $GLOBALS['database']->get('account','account_uid', [
+    'user_id' => $user_id,
+    'is_primary' => 1
+]);
+$user['primary_account'] = $primary_account;
 return json_encode((object)[
     'user' => $user
 ]);

@@ -49,6 +49,10 @@ $router->get('/login_tokens/{token}', function($token){
     return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/login_tokens-get.php';
 });
 
+$router->post('/items', function(){
+    return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/items-post.php';
+});
+
 //Dispatches the routes
 $dispatcher = new Phroute\Phroute\Dispatcher($router->getData());
 $response = $dispatcher->dispatch($_SERVER['REQUEST_METHOD'], parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));

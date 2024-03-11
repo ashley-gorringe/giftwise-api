@@ -48,6 +48,17 @@ if($response->valid){
     ]);
     $user_id = $GLOBALS['database']->id();
 
+    $account_uid = bin2hex(random_bytes(18));
+    while ($GLOBALS['database']->has('account', ['account_uid' => $account_uid])) {
+        $account_uid = bin2hex(random_bytes(18));
+    }
+    $GLOBALS['database']->insert('account', [
+        'user_id' => $user_id,
+        'account_uid' => $account_uid,
+        'is_primary' => 1,
+        'name_full' => $_POST['name_full'],
+    ]);
+
     //Creates the token
     $token = bin2hex(random_bytes(18));
     while ($GLOBALS['database']->has('login_token', ['token' => $token])) {
@@ -64,7 +75,8 @@ if($response->valid){
         'user_id' => $user_id,
         'email' => $_POST['email'],
         'name_full' => $_POST['name_full'],
-        'name_preferred' => $_POST['name_preferred'] ?? $_POST['name_full']
+        'name_preferred' => $_POST['name_preferred'] ?? $_POST['name_full'],
+        'primary_account' => $account_uid
     ];
 }else{
     $response->error = "There's something wrong with your submission. Please check the fields and try again.";

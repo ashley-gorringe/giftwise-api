@@ -2,6 +2,25 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
+CREATE TABLE `account` (
+  `account_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `account_uid` varchar(36) NOT NULL,
+  `is_primary` int(1) NOT NULL DEFAULT '0',
+  `name_full` tinytext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `item` (
+  `item_id` int(11) NOT NULL,
+  `account_id` int(11) NOT NULL,
+  `item_uid` varchar(36) NOT NULL,
+  `title` tinytext NOT NULL,
+  `description` text NOT NULL,
+  `url` tinytext NOT NULL,
+  `visibility` int(1) NOT NULL DEFAULT '0',
+  `created_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE `login_token` (
   `login_token_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
@@ -21,13 +40,30 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+ALTER TABLE `account`
+  ADD PRIMARY KEY (`account_id`),
+  ADD UNIQUE KEY `account_uid` (`account_uid`),
+  ADD KEY `account_user_id` (`user_id`);
+
+ALTER TABLE `item`
+  ADD PRIMARY KEY (`item_id`),
+  ADD UNIQUE KEY `item_uid` (`item_uid`),
+  ADD KEY `item_account_id` (`account_id`);
+
 ALTER TABLE `login_token`
   ADD PRIMARY KEY (`login_token_id`),
+  ADD UNIQUE KEY `token` (`token`),
   ADD KEY `login_token_user_id` (`user_id`);
 
 ALTER TABLE `user`
   ADD PRIMARY KEY (`user_id`);
 
+
+ALTER TABLE `account`
+  MODIFY `account_id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `item`
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `login_token`
   MODIFY `login_token_id` int(11) NOT NULL AUTO_INCREMENT;
@@ -35,6 +71,12 @@ ALTER TABLE `login_token`
 ALTER TABLE `user`
   MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
 
+
+ALTER TABLE `account`
+  ADD CONSTRAINT `account_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `item`
+  ADD CONSTRAINT `item_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `account` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `login_token`
   ADD CONSTRAINT `login_token_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;

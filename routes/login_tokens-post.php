@@ -56,12 +56,18 @@ if($response->valid){
             'token' => $token
         ]);
 
+        $primary_account = $GLOBALS['database']->get('account','account_uid', [
+            'user_id' => $user['user_id'],
+            'is_primary' => 1
+        ]);
+
         $response->token = $token;
         $response->user = [
             'user_id' => $user['user_id'],
             'email' => $user['email'],
             'name_full' => $user['name_full'],
-            'name_preferred' => $user['name_preferred'] ?? $user['name_full']
+            'name_preferred' => $user['name_preferred'] ?? $user['name_full'],
+            'primary_account' => $primary_account,
         ];
     }
 }else{
