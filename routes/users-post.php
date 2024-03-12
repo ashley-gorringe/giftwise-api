@@ -70,6 +70,12 @@ if($response->valid){
         'token' => $token
     ]);
 
+    //get all accoutns for the user
+    $accounts = $GLOBALS['database']->select('account','*', [
+        'user_id' => $user_id,
+        'is_primary' => 0
+    ]);
+
     $response->token = $token;
     $response->user = [
         'user_id' => $user_id,
@@ -78,6 +84,7 @@ if($response->valid){
         'name_preferred' => $_POST['name_preferred'] ?? $_POST['name_full'],
         'primary_account' => $account_uid
     ];
+    $response->accounts->accounts = $accounts;
 }else{
     $response->error = "There's something wrong with your submission. Please check the fields and try again.";
 }

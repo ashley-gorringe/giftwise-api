@@ -31,6 +31,8 @@ $database = new AdvancedMedoo([
 use Phroute\Phroute\RouteCollector;
 $router = new RouteCollector();
 
+require_once dirname($_SERVER['DOCUMENT_ROOT']).'/functions.php';
+
 //Sets up the routes
 $router->any('/', function(){
     http_response_code(400);
@@ -51,6 +53,10 @@ $router->get('/login_tokens/{token}', function($token){
 
 $router->post('/items', function(){
     return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/items-post.php';
+});
+
+$router->get('/wishlists/{uid}', function($uid){
+    return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/wishlists-get.php';
 });
 
 //Dispatches the routes

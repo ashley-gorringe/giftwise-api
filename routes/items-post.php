@@ -3,6 +3,8 @@ $response = (object)[];
 $response->error_fields = (object)[];
 $response->valid = true;
 
+checkAuth();
+
 if($_GET['type'] == 'link'){
     if(empty($_POST['link'])){
         $response->error_fields->link = 'Please enter a link to the item.';
@@ -39,4 +41,68 @@ if($_GET['type'] == 'link'){
     
     return json_encode($response);
 
+}elseif($_GET['type'] == 'manual'){
+
+    if(empty($_POST['wishlist'])){
+        http_response_code(400);
+        exit;
+    }
+    /* //get userid from token
+    $user_id = $GLOBALS['database']->get('login_token', 'user_id', [
+        'token' => $_GET['token']
+    ]);
+    //make sure that the user is the owner of the wishlist
+    $account = $GLOBALS['database']->get('account', [
+        'account_uid' => $_POST['wishlist'],
+        'user_id' => $user_id
+    ]);
+    if($account == false){
+        http_response_code(401);
+        exit;
+    } */
+
+    //get user_id from the token
+    $user_id = $GLOBALS['database']->get('login_token', 'user_id', [
+        'token' => $_GET['token']
+    ]);
+    $account = $GLOBALS['database']->get('account','*', [
+        'account_uid' => $_POST['wishlist'],
+        'user_id' => $user_id
+    ]);
+    if($account == false){
+        http_response_code(401);
+        exit;
+    }
+
+    if(empty($_POST['title'])){
+        $response->error_fields->title = 'Please enter a title for the item.';
+        $response->valid = false;
+    }
+
+    if($response->valid){
+        $item_uid = bin2hex(random_bytes(18));
+        while ($GLOBALS['database']->has('item', ['item_uid' => $item_uid])) {
+            $item_uid = bin2hex(random_bytes(18));
+        }
+
+        $GLOBALS['database']->insert('item', [
+            'item_uid' => $item_uid,
+            'account_id' => $account['account_id'],
+            'title' => $_POST['title'],
+            'description' => $_POST['description'],
+            'url' => $_POST['url'],
+        ]);
+
+        $response->item = [
+            'item_uid' => $item_uid,
+            'title' => $_POST['title'],
+            'description' => $_POST['description'],
+            'url' => $_POST['url'],
+        ];
+
+        return json_encode($response);
+    }
+
+}else{
+    http_response_code(400);
 }
