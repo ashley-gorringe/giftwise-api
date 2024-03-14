@@ -3,7 +3,10 @@
         "vlucas/phpdotenv": "^5.6",
         "dandylion/advancedmedoo": "^1.2",
         "phroute/phroute": "^2.2",
-        "ramsey/uuid": "^4.7"
+        "ramsey/uuid": "^4.7",
+        "aws/aws-sdk-php": "^3.300",
+        "samayo/bulletproof": "^5.0",
+        "intervention/image": "^2.7"
     },
     "config": {
         "platform": {

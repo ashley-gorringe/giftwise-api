@@ -27,6 +27,19 @@ $database = new AdvancedMedoo([
     'password' => $_ENV['DB_PASSWORD'],
 ]);
 
+use Aws\S3\S3Client;
+$s3_client_credentials = new Aws\Credentials\Credentials($_ENV['R2_ACCESS_KEY_ID'], $_ENV['R2_ACCESS_KEY_SECRET']);
+$s3_client = new Aws\S3\S3Client([
+    'region' => 'auto',
+    'endpoint' => "https://".$_ENV['R2_ACCOUNT_ID'].".r2.cloudflarestorage.com",
+    'version' => 'latest',
+    'credentials' => $s3_client_credentials
+]);
+
+//Sets up the image manager
+use Intervention\Image\ImageManager;
+$imageManager = new ImageManager(['driver' => 'gd']);
+
 //Sets up the HTTP router
 use Phroute\Phroute\RouteCollector;
 $router = new RouteCollector();

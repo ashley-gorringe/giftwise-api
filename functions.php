@@ -13,4 +13,10 @@ function checkAuth(){
             exit;
         }
     }
-};
+}
+
+function resizeImage($source, $width, $destination){
+    $GLOBALS['imageManager']->make($source)->resize($width, null, function ($constraint) {
+        $constraint->aspectRatio();
+    })->save($destination);
+}

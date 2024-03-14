@@ -25,6 +25,22 @@ $items = $GLOBALS['database']->select('item', '*', [
     'account_id' => $wishlist['account_id']
 ]);
 
+foreach($items as $key => $item){
+    if($item['image_id'] != null){
+        $image_uid = $GLOBALS['database']->get('image', 'image_uid', [
+            'image_id' => $item['image_id']
+        ]);
+        $images = array(
+            '1000' => 'https://r2.giftwise.app/'.$image_uid.'_1000.jpg',
+            '500' => 'https://r2.giftwise.app/'.$image_uid.'_500.jpg',
+            '300' => 'https://r2.giftwise.app/'.$image_uid.'_300.jpg'
+        );
+        $items[$key]['images'] = $images;
+    }else{
+        $items[$key]['images'] = null;
+    }
+}
+
 $response->wishlist = $wishlist;
 $response->items = $items;
 

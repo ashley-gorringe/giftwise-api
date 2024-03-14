@@ -84,7 +84,7 @@ if($response->valid){
         'name_preferred' => $_POST['name_preferred'] ?? $_POST['name_full'],
         'primary_account' => $account_uid
     ];
-    $response->accounts->accounts = $accounts;
+    $response->user['accounts'] = $accounts;
 }else{
     $response->error = "There's something wrong with your submission. Please check the fields and try again.";
 }
