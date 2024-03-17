@@ -153,11 +153,26 @@ if($_GET['type'] == 'link'){
             $image_id = null;
         }
 
+        if(!empty($_POST['value'])){
+            //is value an integer or a float?
+            //remove any commas
+            $value = str_replace(',', '', $_POST['value']);
+            if(is_numeric($value)){
+                $value = $value * 100;
+            }else{
+                $response->error_fields->value = 'Please enter a valid value for the item.';
+                $response->valid = false;
+            }
+        }else{
+            $value = null;
+        }
+
         $GLOBALS['database']->insert('item', [
             'item_uid' => $item_uid,
             'account_id' => $account['account_id'],
             'title' => $_POST['title'],
             'description' => $_POST['description'],
+            'value' => $value,
             'url' => $_POST['url'],
             'image_id' => $image_id
         ]);

@@ -10,14 +10,22 @@ CREATE TABLE `account` (
   `name_full` tinytext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `image` (
+  `image_id` int(11) NOT NULL,
+  `image_uid` varchar(36) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE `item` (
   `item_id` int(11) NOT NULL,
   `account_id` int(11) NOT NULL,
   `item_uid` varchar(36) NOT NULL,
   `title` tinytext NOT NULL,
   `description` text NOT NULL,
-  `url` tinytext NOT NULL,
+  `url` tinytext,
+  `currency` varchar(3) NOT NULL,
+  `value` int(11) DEFAULT NULL,
   `visibility` int(1) NOT NULL DEFAULT '0',
+  `image_id` int(11) DEFAULT NULL,
   `created_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -45,10 +53,14 @@ ALTER TABLE `account`
   ADD UNIQUE KEY `account_uid` (`account_uid`),
   ADD KEY `account_user_id` (`user_id`);
 
+ALTER TABLE `image`
+  ADD PRIMARY KEY (`image_id`);
+
 ALTER TABLE `item`
   ADD PRIMARY KEY (`item_id`),
   ADD UNIQUE KEY `item_uid` (`item_uid`),
-  ADD KEY `item_account_id` (`account_id`);
+  ADD KEY `item_account_id` (`account_id`),
+  ADD KEY `item_image_id` (`image_id`);
 
 ALTER TABLE `login_token`
   ADD PRIMARY KEY (`login_token_id`),
@@ -61,6 +73,9 @@ ALTER TABLE `user`
 
 ALTER TABLE `account`
   MODIFY `account_id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `image`
+  MODIFY `image_id` int(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `item`
   MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT;
@@ -76,7 +91,8 @@ ALTER TABLE `account`
   ADD CONSTRAINT `account_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `item`
-  ADD CONSTRAINT `item_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `account` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `item_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `account` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `item_ibfk_2` FOREIGN KEY (`image_id`) REFERENCES `image` (`image_id`) ON DELETE SET NULL ON UPDATE NO ACTION;
 
 ALTER TABLE `login_token`
   ADD CONSTRAINT `login_token_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;

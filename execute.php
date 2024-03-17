@@ -67,6 +67,9 @@ $router->get('/login_tokens/{token}', function($token){
 $router->post('/items', function(){
     return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/items-post.php';
 });
+$router->delete('/items/{uid}', function($uid){
+    return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/items-delete.php';
+});
 
 $router->get('/wishlists/{uid}', function($uid){
     return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/wishlists-get.php';

@@ -39,6 +39,14 @@ foreach($items as $key => $item){
     }else{
         $items[$key]['images'] = null;
     }
+
+    //if value is not null, get the value convert it from cents to dollars
+    if($item['value'] != null){
+        $items[$key]['value'] = $item['value']/100;
+        //format the value to 2 decimal places and commas
+        $items[$key]['value'] = number_format($items[$key]['value'], 2, '.', ',');
+    }
+
 }
 
 $response->wishlist = $wishlist;
