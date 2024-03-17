@@ -15,30 +15,9 @@ if($token_count == 0){
 $user_id = $GLOBALS['database']->get('login_token', 'user_id', [
     'token' => $token
 ]);
-//get the user from the user_id
-$user = $GLOBALS['database']->get('user',[
-    'user_id',
-    'email',
-    'name_full',
-    'name_preferred'
-], [
-    'user_id' => $user_id
-]);
-//get the primary account from the user_id
-$primary_account = $GLOBALS['database']->get('account','account_uid', [
-    'user_id' => $user_id,
-    'is_primary' => 1
-]);
-$user['primary_account'] = $primary_account;
-
-$accounts = $GLOBALS['database']->select('account','*', [
-    'user_id' => $user_id,
-    'is_primary' => 0
-]);
-$user['accounts'] = $accounts;
 
 return json_encode((object)[
-    'user' => $user
+    'user' => getUserData($user_id)
 ]);
 exit;
 ?>

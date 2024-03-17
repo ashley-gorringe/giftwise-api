@@ -33,7 +33,6 @@ $user = $GLOBALS['database']->get('user',[
     'user_id',
     'email',
     'password',
-    'name_full',
     'name_preferred'
 ], [
     'email' => $_POST['email']
@@ -56,25 +55,8 @@ if($response->valid){
             'token' => $token
         ]);
 
-        $primary_account = $GLOBALS['database']->get('account','account_uid', [
-            'user_id' => $user['user_id'],
-            'is_primary' => 1
-        ]);
-
-        $accounts = $GLOBALS['database']->select('account','*', [
-            'user_id' => $user['user_id'],
-            'is_primary' => 0
-        ]);
-
         $response->token = $token;
-        $response->user = [
-            'user_id' => $user['user_id'],
-            'email' => $user['email'],
-            'name_full' => $user['name_full'],
-            'name_preferred' => $user['name_preferred'] ?? $user['name_full'],
-            'primary_account' => $primary_account,
-        ];
-        $response->user['accounts'] = $accounts;
+        $response->user = getUserData($user['user_id']);
     }
 }else{
     $response->error = "There's something wrong with your submission. Please check the fields and try again.";
