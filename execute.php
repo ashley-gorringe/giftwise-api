@@ -93,6 +93,9 @@ $router->get('/wishlists', function(){
 $router->post('/wishlists', function(){
     return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/wishlists-post.php';
 });
+$router->delete('/wishlists/{uid}', function($uid){
+    return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/wishlists-delete.php';
+});
 
 //Dispatches the routes
 $dispatcher = new Phroute\Phroute\Dispatcher($router->getData());
