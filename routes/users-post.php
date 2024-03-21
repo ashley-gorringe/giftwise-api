@@ -140,7 +140,8 @@ if($response->valid){
         'user_id' => $user_id,
         'account_uid' => $account_uid,
         'is_primary' => 1,
-        'name_full' => $_POST['name_full'],
+        'is_private' => 0,
+        'account_name' => $_POST['name_full'],
         'image_id' => $image_id,
     ]);
 
