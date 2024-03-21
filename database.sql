@@ -7,7 +7,9 @@ CREATE TABLE `account` (
   `user_id` int(11) NOT NULL,
   `account_uid` varchar(36) NOT NULL,
   `is_primary` int(1) NOT NULL DEFAULT '0',
-  `name_full` tinytext NOT NULL
+  `is_private` int(1) NOT NULL DEFAULT '0',
+  `account_name` tinytext NOT NULL,
+  `image_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `image` (
@@ -41,7 +43,6 @@ CREATE TABLE `user` (
   `user_id` int(11) NOT NULL,
   `email` tinytext NOT NULL,
   `password` tinytext NOT NULL,
-  `name_full` tinytext NOT NULL,
   `name_preferred` tinytext NOT NULL,
   `created_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `activity_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -51,7 +52,8 @@ CREATE TABLE `user` (
 ALTER TABLE `account`
   ADD PRIMARY KEY (`account_id`),
   ADD UNIQUE KEY `account_uid` (`account_uid`),
-  ADD KEY `account_user_id` (`user_id`);
+  ADD KEY `account_user_id` (`user_id`),
+  ADD KEY `account_image_id` (`image_id`);
 
 ALTER TABLE `image`
   ADD PRIMARY KEY (`image_id`);
@@ -88,7 +90,8 @@ ALTER TABLE `user`
 
 
 ALTER TABLE `account`
-  ADD CONSTRAINT `account_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `account_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `account_ibfk_2` FOREIGN KEY (`image_id`) REFERENCES `image` (`image_id`) ON DELETE SET NULL ON UPDATE NO ACTION;
 
 ALTER TABLE `item`
   ADD CONSTRAINT `item_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `account` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE,

@@ -10,9 +10,19 @@ $user_id = $GLOBALS['database']->get('login_token', 'user_id', [
     'token' => $_GET['token']
 ]);
 
-if(empty($_POST['name_full'])){
+if(empty($_POST['account_name'])){
     $response->error_fields->title = 'Please enter a Full Name.';
     $response->valid = false;
+}
+
+if(!empty($_POST['who_for'])){
+    if($_POST['who_for'] == 'myself'){
+        $is_private = 1;
+    }elseif($_POST['who_for'] == 'another'){
+        $is_private = 0;
+    }else{
+        $response->valid = false;
+    }
 }
 
 if($response->valid){
@@ -103,11 +113,13 @@ if($response->valid){
         'user_id' => $user_id,
         'account_uid' => $wishlist_uid,
         'is_primary' => 0,
-        'name_full' => $_POST['name_full'],
+        'is_private' => $is_private,
+        'account_name' => $_POST['account_name'],
         'image_id' => $image_id
     ]);
 
     $response->account_uid = $wishlist_uid;
+    $response->is_private = $is_private;
 
     $response->wishlists = getWishlists($user_id);
 

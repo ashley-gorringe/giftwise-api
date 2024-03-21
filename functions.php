@@ -49,7 +49,8 @@ function getWishlists($user_id){
         '[>]image' => ['image_id' => 'image_id'],
     ], [
         'account.account_uid',
-        'account.name_full',
+        'account.account_name',
+        'account.is_private',
         'image.image_uid'
     ], [
         'user_id' => $user_id,
