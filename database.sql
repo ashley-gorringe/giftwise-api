@@ -12,6 +12,13 @@ CREATE TABLE `account` (
   `image_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `account_share` (
+  `account_share_id` int(11) NOT NULL,
+  `account_id` int(11) NOT NULL,
+  `share_code` varchar(6) NOT NULL,
+  `created_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE `image` (
   `image_id` int(11) NOT NULL,
   `image_uid` varchar(36) NOT NULL
@@ -55,6 +62,10 @@ ALTER TABLE `account`
   ADD KEY `account_user_id` (`user_id`),
   ADD KEY `account_image_id` (`image_id`);
 
+ALTER TABLE `account_share`
+  ADD PRIMARY KEY (`account_share_id`),
+  ADD UNIQUE KEY `account_share_account_id` (`account_id`);
+
 ALTER TABLE `image`
   ADD PRIMARY KEY (`image_id`);
 
@@ -76,6 +87,9 @@ ALTER TABLE `user`
 ALTER TABLE `account`
   MODIFY `account_id` int(11) NOT NULL AUTO_INCREMENT;
 
+ALTER TABLE `account_share`
+  MODIFY `account_share_id` int(11) NOT NULL AUTO_INCREMENT;
+
 ALTER TABLE `image`
   MODIFY `image_id` int(11) NOT NULL AUTO_INCREMENT;
 
@@ -92,6 +106,9 @@ ALTER TABLE `user`
 ALTER TABLE `account`
   ADD CONSTRAINT `account_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `account_ibfk_2` FOREIGN KEY (`image_id`) REFERENCES `image` (`image_id`) ON DELETE SET NULL ON UPDATE NO ACTION;
+
+ALTER TABLE `account_share`
+  ADD CONSTRAINT `account_share_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `account` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `item`
   ADD CONSTRAINT `item_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `account` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE,

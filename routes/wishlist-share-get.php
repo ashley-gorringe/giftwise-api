@@ -70,6 +70,26 @@ if($response->valid === true){
             'share_code' => $share_code
         ]);
     }
+
+    $link_accounts = $GLOBALS['database']->select('account_link', [
+        '[>]account' => ['user_id' => 'user_id', 'AND' => ['is_primary' => 1]], // Join condition with additional filter for primary account
+        '[>]image' => ['account.image_id' => 'image_id'] // Join with image table based on account's image_id
+    ], [
+        'account_link.account_link_uid',
+        'account.account_name',
+        'image.image_uid',
+    ], [
+        'account_link.account_id' => $account['account_id'] // Your filtering condition
+    ]);
+    foreach ($link_accounts as $key => $link_account) {
+        if($link_account['image_uid'] == null){
+            $link_accounts[$key]['image_url'] = null;
+        }else{
+            $link_accounts[$key]['image_url'] = 'https://r2.giftwise.app/'.$link_account['image_uid'].'_100.jpg';
+        }
+    }
+
+    $response->link_accounts = $link_accounts;
     $response->share_code = $share_code;
     return json_encode($response);
     exit;

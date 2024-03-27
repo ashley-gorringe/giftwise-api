@@ -100,6 +100,12 @@ $router->delete('/wishlists/{uid}', function($uid){
 $router->get('/wishlist_share/{uid}', function($uid){
     return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/wishlist-share-get.php';
 });
+$router->post('/wishlist_share', function(){
+    return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/wishlist_share-post.php';
+});
+$router->delete('/wishlist_share/{uid}', function($uid){
+    return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/wishlist-share-delete.php';
+});
 
 //Dispatches the routes
 $dispatcher = new Phroute\Phroute\Dispatcher($router->getData());
