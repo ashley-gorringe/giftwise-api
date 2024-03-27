@@ -73,3 +73,12 @@ function resizeImage($source, $width, $destination){
         $constraint->aspectRatio();
     })->save($destination);
 }
+
+//function that creates a random string, takes in a length and the characters to use
+function randomString($length, $characters){
+    $string = '';
+    for ($i = 0; $i < $length; $i++) {
+        $string .= $characters[rand(0, strlen($characters) - 1)];
+    }
+    return $string;
+}
