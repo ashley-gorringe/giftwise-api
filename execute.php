@@ -103,6 +103,9 @@ $router->get('/wishlist_share/{uid}', function($uid){
 $router->post('/wishlist_share', function(){
     return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/wishlist_share-post.php';
 });
+$router->get('/wishlist_share', function(){
+    return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/wishlist_share-index-get.php';
+});
 $router->delete('/wishlist_share/{uid}', function($uid){
     return require_once dirname($_SERVER['DOCUMENT_ROOT']).'/routes/wishlist-share-delete.php';
 });
