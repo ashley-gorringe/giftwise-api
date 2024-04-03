@@ -18,7 +18,9 @@ if(!$GLOBALS['database']->has('account', [
     exit;
 }
 
-$wishlist = $GLOBALS['database']->get('account', '*', [
+$wishlist = $GLOBALS['database']->get('account', [
+    '[>]image' => ['image_id' => 'image_id'],
+], '*', [
     'account_uid' => $uid
 ]);
 $items = $GLOBALS['database']->select('item', '*', [
@@ -49,7 +51,19 @@ foreach($items as $key => $item){
 
 }
 
-$response->wishlist = $wishlist;
+if($wishlist['image_id'] != null){
+    $image_url = 'https://r2.giftwise.app/'.$wishlist['image_uid'].'_100.jpg';
+}else{
+    $image_url = null;
+}
+
+$response->wishlist = [
+    'account_uid' => $wishlist['account_uid'],
+    'account_name' => $wishlist['account_name'],
+    'is_primary' => $wishlist['is_primary'],
+    'is_private' => $wishlist['is_private'],
+    'image_url' => $image_url
+];
 $response->items = $items;
 
 return json_encode($response);
