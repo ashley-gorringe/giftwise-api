@@ -87,7 +87,14 @@ if($_GET['type'] == 'link'){
 
             if($_POST['linked-image']){
                 $image_file = bin2hex(random_bytes(8)) . '.jpg';
-                imagejpeg(imagecreatefromstring(file_get_contents($_POST['linked-image'])), $uploadDir . '/' . $image_file);
+                $image_main = imagecreatefromstring(file_get_contents($_POST['linked-image']));
+                
+                $image = imagecreatetruecolor(imagesx($image_main), imagesy($image_main));
+                $white = imagecolorallocate($image, 255, 255, 255);
+                imagefill($image, 0, 0, $white);
+                imagecopy($image, $image_main, 0, 0, 0, 0, imagesx($image_main), imagesy($image_main));
+
+                imagejpeg($image, $uploadDir . '/' . $image_file);
             }else{
                 if($_FILES['image']['error'] != 0){
                     $response->error = $_FILES['image']['error'];
