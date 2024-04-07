@@ -1,4 +1,7 @@
 <?php
+
+use Dandylion\ProductDetails;
+
 $response = (object)[];
 $response->error_fields = (object)[];
 $response->valid = true;
@@ -6,27 +9,25 @@ $response->valid = true;
 checkAuth();
 
 if($_GET['type'] == 'link'){
-    if(empty($_POST['link'])){
-        $response->error_fields->link = 'Please enter a link to the item.';
+    if(empty($_POST['url'])){
+        $response->error_fields->url = 'Please enter a link to the item.';
         $response->valid = false;
         $response->error = "There's something wrong with your submission. Please check the fields and try again.";
-    }elseif(!filter_var($_POST['link'], FILTER_VALIDATE_URL)){
-        $response->error_fields->link = 'Something is wrong with your link. Please try again.';
+    }elseif(!filter_var($_POST['url'], FILTER_VALIDATE_URL)){
+        $response->error_fields->url = 'Something is wrong with your link. Please try again.';
         $response->valid = false;
         $response->error = "There's something wrong with your submission. Please check the fields and try again.";
     }else{
 
-        /* //get product detials from the link
-        $info = $GLOBALS['embed']->get($url);
-        $metadata = $info->getMetas();
+        $ProductDetails = ProductDetails::url($_POST['url']);
 
-        $response->product = [
-            'title' => $info->title,
-            'description' => $info->description,
-            'url' => $info->url,
-            'image' => $info->image,
-            'metadata' => $metadata->all()
-        ]; */
+        //if productDetails is empty, then return null
+        if(empty($ProductDetails)){
+            $response->product = null;
+        }else{
+            $response->product = $ProductDetails;
+        }
+
     }
     
     return json_encode($response);
@@ -75,19 +76,7 @@ if($_GET['type'] == 'link'){
             $item_uid = bin2hex(random_bytes(18));
         }
 
-        if($_FILES){
-            if($_FILES['image']['error'] != 0){
-                $response->error = $_FILES['image']['error'];
-                return json_encode($response);
-                exit;
-            }
-            //image name current timestamp plus random string
-            $image_tempname = bin2hex(random_bytes(8));
-
-            $image = new Bulletproof\Image($_FILES['image']);
-            $image->setName($image_tempname);
-            $image->setSize(0, 4000000);
-            $image->setMime(array('jpeg', 'jpg', 'png'));
+        if($_FILES || $_POST['linked-image']){
 
             $uploadDir = dirname($_SERVER['DOCUMENT_ROOT']).'/uploads';
             if (!is_dir($uploadDir) || !is_writable($uploadDir)) {
@@ -95,59 +84,86 @@ if($_GET['type'] == 'link'){
                 return json_encode($response);
                 exit;
             }
-            $image->setStorage($uploadDir);
 
-            $upload = $image->upload();
-            if(!$upload){
-                $response->error = "There was an error uploading your image. Please try again.";
-                return json_encode($response);
-                exit;
+            if($_POST['linked-image']){
+                $image_file = bin2hex(random_bytes(8)) . '.jpg';
+                imagejpeg(imagecreatefromstring(file_get_contents($_POST['linked-image'])), $uploadDir . '/' . $image_file);
             }else{
-                $image_uid = bin2hex(random_bytes(18));
-                while ($GLOBALS['database']->has('image', ['image_uid' => $image_uid])) {
-                    $image_uid = bin2hex(random_bytes(18));
-                }
-                $GLOBALS['database']->insert('image',[
-                    'image_uid'=>$image_uid,
-                ]);
-                $image_id = $GLOBALS['database']->id();
-
-                $image_file = $image->getName().'.'.$image->getMime();
-
-                resizeImage($uploadDir.'/'.$image_file, 1000, $uploadDir.'/'.$image_uid.'_1000.jpg');
-                resizeImage($uploadDir.'/'.$image_file, 500, $uploadDir.'/'.$image_uid.'_500.jpg');
-                resizeImage($uploadDir.'/'.$image_file, 300, $uploadDir.'/'.$image_uid.'_300.jpg');
-                unlink($uploadDir.'/'.$image_file);
-
-                try {
-                    $GLOBALS['s3_client']->putObject([
-                        'Bucket' => 'giftwise',
-                        'Key' => $image_uid.'_1000.jpg',
-                        'Body' => fopen($uploadDir.'/'.$image_uid.'_1000.jpg', 'r'),
-                        'ACL' => 'public-read',
-                    ]);
-                    unlink($uploadDir.'/'.$image_uid.'_1000.jpg');
-                    $GLOBALS['s3_client']->putObject([
-                        'Bucket' => 'giftwise',
-                        'Key' => $image_uid.'_500.jpg',
-                        'Body' => fopen($uploadDir.'/'.$image_uid.'_500.jpg', 'r'),
-                        'ACL' => 'public-read',
-                    ]);
-                    unlink($uploadDir.'/'.$image_uid.'_500.jpg');
-                    $GLOBALS['s3_client']->putObject([
-                        'Bucket' => 'giftwise',
-                        'Key' => $image_uid.'_300.jpg',
-                        'Body' => fopen($uploadDir.'/'.$image_uid.'_300.jpg', 'r'),
-                        'ACL' => 'public-read',
-                    ]);
-                    unlink($uploadDir.'/'.$image_uid.'_300.jpg');
-        
-                } catch (Aws\S3\Exception\S3Exception $e) {
-                    //echo "There was an error uploading the file.\n";
-                    $response->error = "There was an error uploading the file.";
-                    echo json_encode($response);
+                if($_FILES['image']['error'] != 0){
+                    $response->error = $_FILES['image']['error'];
+                    return json_encode($response);
                     exit;
                 }
+                //image name current timestamp plus random string
+                $image_tempname = bin2hex(random_bytes(8));
+                $image = new Bulletproof\Image($_FILES['image']);
+
+                $image->setName($image_tempname);
+                $image->setSize(0, 4000000);
+                $image->setMime(array('jpeg', 'jpg', 'png'));
+                $image->setStorage($uploadDir);
+
+                $upload = $image->upload();
+                if(!$upload){
+                    $response->error = "There was an error uploading your image. Please try again.";
+                    return json_encode($response);
+                    exit;
+                }
+
+                $image_file = $image->getName().'.'.$image->getMime();
+            }
+
+            
+            
+
+            
+            
+
+
+            $image_uid = bin2hex(random_bytes(18));
+            while ($GLOBALS['database']->has('image', ['image_uid' => $image_uid])) {
+                $image_uid = bin2hex(random_bytes(18));
+            }
+            $GLOBALS['database']->insert('image',[
+                'image_uid'=>$image_uid,
+            ]);
+            $image_id = $GLOBALS['database']->id();
+
+            
+
+            resizeImage($uploadDir.'/'.$image_file, 1000, $uploadDir.'/'.$image_uid.'_1000.jpg');
+            resizeImage($uploadDir.'/'.$image_file, 500, $uploadDir.'/'.$image_uid.'_500.jpg');
+            resizeImage($uploadDir.'/'.$image_file, 300, $uploadDir.'/'.$image_uid.'_300.jpg');
+            unlink($uploadDir.'/'.$image_file);
+
+            try {
+                $GLOBALS['s3_client']->putObject([
+                    'Bucket' => 'giftwise',
+                    'Key' => $image_uid.'_1000.jpg',
+                    'Body' => fopen($uploadDir.'/'.$image_uid.'_1000.jpg', 'r'),
+                    'ACL' => 'public-read',
+                ]);
+                unlink($uploadDir.'/'.$image_uid.'_1000.jpg');
+                $GLOBALS['s3_client']->putObject([
+                    'Bucket' => 'giftwise',
+                    'Key' => $image_uid.'_500.jpg',
+                    'Body' => fopen($uploadDir.'/'.$image_uid.'_500.jpg', 'r'),
+                    'ACL' => 'public-read',
+                ]);
+                unlink($uploadDir.'/'.$image_uid.'_500.jpg');
+                $GLOBALS['s3_client']->putObject([
+                    'Bucket' => 'giftwise',
+                    'Key' => $image_uid.'_300.jpg',
+                    'Body' => fopen($uploadDir.'/'.$image_uid.'_300.jpg', 'r'),
+                    'ACL' => 'public-read',
+                ]);
+                unlink($uploadDir.'/'.$image_uid.'_300.jpg');
+    
+            } catch (Aws\S3\Exception\S3Exception $e) {
+                //echo "There was an error uploading the file.\n";
+                $response->error = "There was an error uploading the file.";
+                echo json_encode($response);
+                exit;
             }
         }else{
             $image_id = null;

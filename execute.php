@@ -30,6 +30,9 @@ require BASE_PATH.'vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
+use Curl\Curl;
+use Dandylion\ProductDetails;
+
 //Sets up the database
 use Dandylion\AdvancedMedoo;
 $database = new AdvancedMedoo([
