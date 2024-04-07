@@ -7,8 +7,8 @@
         "aws/aws-sdk-php": "^3.300",
         "samayo/bulletproof": "^5.0",
         "intervention/image": "^2.7",
-        "dandylion/productdetails": "^0.2.0",
-        "curl/curl": "^2.5"
+        "curl/curl": "^2.5",
+        "dandylion/productdetails": "^0.3.0"
     },
     "config": {
         "platform": {
