@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     // Only allow CORS if we're doing a GET - this is a preflight request
     header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-    header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token, Authorization, Token');
+    header('Access-Control-Allow-Headers: *');
     exit;
 }
 
