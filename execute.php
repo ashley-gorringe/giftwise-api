@@ -9,7 +9,7 @@ header("Cache-Control: no-store, no-cache, must-revalidate");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: https://my.giftwise.app");
 header("Content-Type: application/json");
 //header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 header("Access-Control-Allow-Headers: *");
@@ -18,7 +18,7 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     // Return only the headers and not the content
     // Only allow CORS if we're doing a GET - this is a preflight request
-    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Origin: https://my.giftwise.app');
     header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
     header('Access-Control-Allow-Headers: *');
     exit;
