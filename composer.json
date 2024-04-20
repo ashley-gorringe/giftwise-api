@@ -8,7 +8,7 @@
         "samayo/bulletproof": "^5.0",
         "intervention/image": "^2.7",
         "curl/curl": "^2.5",
-        "dandylion/productdetails": "^0.4.2"
+        "dandylion/productdetails": "^0.4.3"
     },
     "config": {
         "platform": {
